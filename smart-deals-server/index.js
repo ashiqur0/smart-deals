@@ -148,6 +148,18 @@ async function run() {
             res.send(result);
         });
 
+        // GET API: to get my bids using buyer email addedress
+        app.get('/bids', async(req, res) => {
+            const query = {};
+            if (query.email) {
+                query.buyer_email = email;
+            }
+
+            const cursor = bidsCollection.find(query);
+            const result = cursor.toArray();
+            res.send(result);
+        });
+
         // POST API: to post a bids
         app.post('/bids', async (req, res) => {
             const newBids = req.body;
