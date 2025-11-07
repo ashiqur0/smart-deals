@@ -15,7 +15,6 @@ app.get('/', (req, res) => {
 });
 
 // connection uri
-// const uri = "mongodb+srv://smartdbUser:3iiFOE0iiWpG8vOI@cluster0.edix7i0.mongodb.net/?appName=Cluster0";
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.edix7i0.mongodb.net/?appName=Cluster0`;
 
 
