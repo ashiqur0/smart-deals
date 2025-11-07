@@ -79,6 +79,13 @@ async function run() {
             res.send(result);
         });
 
+        // 
+        app.get('/latest-products', async(req, res) => {
+            const cursor = productCollection.find().sort({created_at: -1}).limit(6);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
         // GET API to find specific product data
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -100,8 +107,9 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const update = {
                 $set: {
-                    name: req.body.name,
-                    email: req.body.name
+                    // name: req.body.name,
+                    // email: req.body.name
+                    image: req.body.image
                 }
             };
             const options = {};
@@ -127,6 +135,15 @@ async function run() {
             }
 
             const cursor = bidsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+        // Get Bids by product id with descending bids price
+        app.get('/products/bids/:productId', async(req, res) => {
+            const productId = req.params.productId;
+            const query = {product: productId};
+            const cursor = bidsCollection.find(query).sort({bid_price: -1});
             const result = await cursor.toArray();
             res.send(result);
         });

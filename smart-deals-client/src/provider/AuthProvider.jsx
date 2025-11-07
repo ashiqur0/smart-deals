@@ -4,13 +4,15 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged,
 import { auth } from '../firebase/firebase.config';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { use } from 'react';
 
 const googleProvider = new GoogleAuthProvider();
-
+const allProductsPromise = fetch('http://localhost:3000/products').then(res => res.json());
 const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const allProducts = use(allProductsPromise);
 
     // signup
     const createUser = (email, password) => {
@@ -55,6 +57,7 @@ const AuthProvider = ({ children }) => {
         signout,
         user,
         loading,
+        allProducts,
     }
 
     return (

@@ -7,6 +7,18 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: blue;
+  --color-primary: linear-gradient(to right, #632EE3, #9F62F2);
   --color-secondary: teal;
+}
+
+/* in your global.css */
+.btn-primary {
+  @apply text-white border-0 bg-gradient-to-r from-[#632EE3] to-[#9F62F2];
+}
+
+.btn-gradient:hover {
+  @apply brightness-110;
+}
+.text-primary {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-[#632EE3] to-[#9F62F2];
 }

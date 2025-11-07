@@ -10,7 +10,7 @@ const AuthLayout = () => {
         <div>
             <Navbar />
 
-            <div>
+            <div className='min-h-screen'>
                 {
                     state == 'loading' ? <Loading /> : <Outlet />
                 }

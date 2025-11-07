@@ -41,7 +41,7 @@ const Navbar = () => {
                         {links}
                     </ul>
                 </div>
-                <Link to='/' className="btn btn-ghost text-xl">Smart <span>Deals</span></Link>
+                <Link to='/' className="btn btn-ghost text-xl">Smart<span className='text-primary'>Deals</span></Link>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -50,7 +50,7 @@ const Navbar = () => {
             </div>
             <div className="navbar-end">
                 {
-                    user && <NavLink onClick={handleSignOut} to='/' className="">Logout</NavLink> ||
+                    user && <NavLink onClick={handleSignOut} to='/' className="btn btn-primary">Logout</NavLink> ||
                     <>
                         <NavLink to='/auth/signup' className="mr-5">SignUp</NavLink>
                         <NavLink to='/auth/login' className="">Login</NavLink>
