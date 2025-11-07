@@ -16,6 +16,8 @@ app.get('/', (req, res) => {
 // connection uri
 const uri = "mongodb+srv://smartdbUser:3iiFOE0iiWpG8vOI@cluster0.edix7i0.mongodb.net/?appName=Cluster0";
 
+
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
     serverApi: {

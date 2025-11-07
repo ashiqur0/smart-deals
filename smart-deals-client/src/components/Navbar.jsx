@@ -12,8 +12,8 @@ const Navbar = () => {
         <li><NavLink to='/bids'>Bids</NavLink></li>
         {
             user && <>
-            <li><NavLink to='/myProducts'>My Products</NavLink></li>
-            <li><NavLink to='/myBids'>My Bids</NavLink></li>            
+            <li><NavLink to='/auth/myProducts'>My Products</NavLink></li>
+            <li><NavLink to='/auth/myBids'>My Bids</NavLink></li>            
             </>
         }
     </>
@@ -52,8 +52,8 @@ const Navbar = () => {
                 {
                     user && <NavLink onClick={handleSignOut} to='/' className="">Logout</NavLink> ||
                     <>
-                        <NavLink to='signup' className="mr-5">SignUp</NavLink>
-                        <NavLink to='login' className="">Login</NavLink>
+                        <NavLink to='/auth/signup' className="mr-5">SignUp</NavLink>
+                        <NavLink to='/auth/login' className="">Login</NavLink>
                     </>
                 }
             </div>

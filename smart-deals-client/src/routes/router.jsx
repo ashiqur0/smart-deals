@@ -7,6 +7,7 @@ import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
 import MyBids from "../pages/MyBids";
 import MyProducts from "../pages/MyProducts";
+import AuthLayout from "../layout/AuthLayout";
 
 const router = createBrowserRouter([
     {
@@ -24,26 +25,28 @@ const router = createBrowserRouter([
             {
                 path: '/bids',
                 Component: Bids
-            },
+            }
+        ]
+    },
+    {
+        path: '/auth',
+        element: <AuthLayout></AuthLayout>,
+        children: [
             {
-                path: '/signup',
+                path: '/auth/signup',
                 Component: SignUp
             },
             {
-                path: '/login',
+                path: '/auth/login',
                 Component: Login
             },
             {
-                path: '/myBids',
-                element: <MyBids>
-
-                </MyBids>
+                path: '/auth/myBids',
+                element: <MyBids></MyBids>
             },
             {
-                path: '/myProducts',
-                element: <MyProducts>
-                    
-                </MyProducts>
+                path: '/auth/myProducts',
+                element: <MyProducts></MyProducts>
             },
         ]
     }
