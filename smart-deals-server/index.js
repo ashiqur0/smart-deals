@@ -36,10 +36,27 @@ async function run() {
         // Create Collections
         const productCollection = db.collection('products');
         const bidsCollection = db.collection('bids');
+        const usersCollection = db.collection('users');
+
+        // POST API: to create user
+        app.post('/users', async(req, res) => {
+            const newUser = req.body;
+
+            // if user already exist do not need to insert to db
+            const email = req.body.email;
+            const query = {email: email};
+            const existingUser = await usersCollection.findOne(query);
+            if (existingUser) {
+                res.send({message: 'user already exist. do not need to insert'})
+            } else {
+                const result = await usersCollection.insertOne(newUser);
+                res.send(result);
+            }
+        })
 
         // GET API to get all the products data
         app.get('/products', async (req, res) => {
-            // const sortWithDescendingPrice = { price_min: -1 };
+            // const sortWithD  escendingPrice = { price_min: -1 };
             // const sortWithAscendingPrice = { price_min: 1 };
             // const cursor = productCollection.find().sort(sortWithDescendingPrice);
 

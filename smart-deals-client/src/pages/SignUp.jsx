@@ -3,12 +3,30 @@ import { use } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 const SignUp = () => {
-    const { googleSignIn } = use(AuthContext);
+    const { signInWithGoogle } = use(AuthContext);
 
     const handleSignInWithGoogle = () => {
-        googleSignIn()
+        signInWithGoogle()
         .then((result) => {
             console.log(result.user);
+            const newUser = {
+                name: result.user.displayName,
+                email: result.user.email,
+                phot: result.user.photoURL
+            }
+
+            // create user in database
+            fetch('http://localhost:3000/users', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(newUser)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('after saving the user', data);
+            })
         })
         .catch(err => {
             console.log(err);
@@ -26,7 +44,7 @@ const SignUp = () => {
                         <label className="label">Password</label>
                         <input type="password" className="input" placeholder="Password" />
                         <div><a className="link link-hover">Forgot password?</a></div>
-                        <button className="btn btn-neutral mt-4">Login</button>
+                        <button className="btn btn-neutral mt-4">Sign up</button>
                         {/* Google */}
                         <button
                             onClick={handleSignInWithGoogle}
