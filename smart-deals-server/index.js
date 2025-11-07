@@ -108,9 +108,9 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const update = {
                 $set: {
-                    // name: req.body.name,
-                    // email: req.body.name
-                    image: req.body.image
+                    name: req.body.name,
+                    email: req.body.name
+                    // image: req.body.image
                 }
             };
             const options = {};
