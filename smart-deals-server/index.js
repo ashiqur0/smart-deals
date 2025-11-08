@@ -26,9 +26,10 @@ const verifyFirebaseToken = async (req, res, next) => {
     if (!token) {
         return res.status(401).send({ message: 'unauthorized access2' });
     }
-    
+
     try {
         const userInfo = await admin.auth().verifyIdToken(token);
+        req.token_email = userInfo.email;
         // console.log('after token validation', userInfo);
         next();
     } catch {
@@ -156,11 +157,14 @@ async function run() {
         // bids related APIs
         // GET API to get the bids
         app.get('/bids', verifyFirebaseToken, async (req, res) => {
-            // console.log('headers', req.headers.authorization);
+            console.log('headers', req);
 
             const email = req.query.email;
             const query = {};
             if (email) {
+                if (email !== req.token_email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
                 query.buyer_email = email;
             }
 
