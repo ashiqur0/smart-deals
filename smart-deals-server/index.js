@@ -2,12 +2,39 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const admin = require("firebase-admin");
 const app = express();
 const port = process.env.PORT || 3000
+
+
+const serviceAccount = require("./smart-deals-firebase-admin-key.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 // middleware
 app.use(cors());
 app.use(express.json());
+
+// create middleware: to validate Token
+const verifyFirebaseToken = async (req, res, next) => {
+    if (!req.headers.authorization) {
+        return res.status(401).send({ message: 'unauthorized access1' });
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) {
+        return res.status(401).send({ message: 'unauthorized access2' });
+    }
+    
+    try {
+        const userInfo = await admin.auth().verifyIdToken(token);
+        // console.log('after token validation', userInfo);
+        next();
+    } catch {
+        return res.status(401).send({ message: 'unauthorized access3' });
+    }
+}
 
 // GET API
 app.get('/', (req, res) => {
@@ -42,15 +69,15 @@ async function run() {
         const usersCollection = db.collection('users');
 
         // POST API: to create user
-        app.post('/users', async(req, res) => {
+        app.post('/users', async (req, res) => {
             const newUser = req.body;
 
             // if user already exist do not need to insert to db
             const email = req.body.email;
-            const query = {email: email};
+            const query = { email: email };
             const existingUser = await usersCollection.findOne(query);
             if (existingUser) {
-                res.send({message: 'user already exist. do not need to insert'})
+                res.send({ message: 'user already exist. do not need to insert' })
             } else {
                 const result = await usersCollection.insertOne(newUser);
                 res.send(result);
@@ -81,8 +108,8 @@ async function run() {
         });
 
         // 
-        app.get('/latest-products', async(req, res) => {
-            const cursor = productCollection.find().sort({created_at: -1}).limit(6);
+        app.get('/latest-products', async (req, res) => {
+            const cursor = productCollection.find().sort({ created_at: -1 }).limit(6);
             const result = await cursor.toArray();
             res.send(result);
         });
@@ -128,7 +155,9 @@ async function run() {
 
         // bids related APIs
         // GET API to get the bids
-        app.get('/bids', async (req, res) => {
+        app.get('/bids', verifyFirebaseToken, async (req, res) => {
+            // console.log('headers', req.headers.authorization);
+
             const email = req.query.email;
             const query = {};
             if (email) {
@@ -141,16 +170,16 @@ async function run() {
         });
 
         // Get Bids by product id with descending bids price
-        app.get('/products/bids/:productId', async(req, res) => {
+        app.get('/products/bids/:productId', async (req, res) => {
             const productId = req.params.productId;
-            const query = {product: productId};
-            const cursor = bidsCollection.find(query).sort({bid_price: -1});
+            const query = { product: productId };
+            const cursor = bidsCollection.find(query).sort({ bid_price: -1 });
             const result = await cursor.toArray();
             res.send(result);
         });
 
-        // GET API: to get my bids using buyer email addedress
-        app.get('/bids', async(req, res) => {
+        // GET API: to get my bids using buyer email address
+        app.get('/bids', async (req, res) => {
             const query = {};
             if (query.email) {
                 query.buyer_email = email;

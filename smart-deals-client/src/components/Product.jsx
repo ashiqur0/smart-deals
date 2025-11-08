@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Link } from 'react-router';
+import { AuthContext } from '../context/AuthContext';
 
 const Product = ({ product }) => {
+    const {user} = use(AuthContext);
     const { _id, title, price_min, price_max, image } = product;
 
     return (
@@ -17,15 +19,9 @@ const Product = ({ product }) => {
                 <h2 className="card-title">{title}</h2>
                 <p>${price_min}-{price_max}</p>
                 <div className="card-actions ">
-                    <Link to={`/auth/productDetails/${_id}`} className='btn btn-primary w-full'>View Details</Link>
+                    <Link to={`${user? `/auth/productDetails/${_id}`:'/auth/login'}`} className='btn btn-primary w-full'>View Details</Link>
                 </div>
             </div>
-
-            {/* <div className='space-y-2 w-full'>
-                <h2 className='text-xl font-semibold mt-5'>{title}</h2>
-                <p className='text-primary text-[18px] text-semibold'>${price_min}-{price_max}</p>
-                <button className='btn btn-gradient w-full'>View Details</button>
-            </div> */}
         </div>
     );
 };

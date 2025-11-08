@@ -9,6 +9,7 @@ import MyBids from "../pages/MyBids";
 import MyProducts from "../pages/MyProducts";
 import AuthLayout from "../layout/AuthLayout";
 import ProductDetails from "../components/ProductDetails";
+import PrivateRoute from "../provider/PrivateRoute";
 
 const router = createBrowserRouter([
     {
@@ -43,16 +44,22 @@ const router = createBrowserRouter([
             },
             {
                 path: '/auth/myBids',
-                element: <MyBids></MyBids>
+                element: <PrivateRoute>
+                    <MyBids></MyBids>
+                </PrivateRoute>
             },
             {
                 path: '/auth/myProducts',
-                element: <MyProducts></MyProducts>
+                element: <PrivateRoute>
+                    <MyProducts></MyProducts>
+                </PrivateRoute>
             },
             {
                 path: '/auth/productDetails/:id',
-                loader: ({params}) => fetch(`http://localhost:3000/products/${params.id}`),
-                element: <ProductDetails></ProductDetails>
+                loader: ({ params }) => fetch(`http://localhost:3000/products/${params.id}`),
+                element: <PrivateRoute>
+                    <ProductDetails></ProductDetails>   
+                </PrivateRoute>
             },
         ]
     }
