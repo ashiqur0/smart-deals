@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const admin = require("firebase-admin");
+const jwt = require('jsonwebtoken');
 const app = express();
 const port = process.env.PORT || 3000
 
@@ -16,7 +17,31 @@ admin.initializeApp({
 app.use(cors());
 app.use(express.json());
 
-// create middleware: to validate Token
+// middleware: to validate JWT Token
+const verifyJWTToken = async (req, res, next) => {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).send({message: 'unauthorized access1'});
+    }
+
+    const token = authorization.split(' ')[1];
+    if (!token) {
+        return res.status(401).send({message: 'unauthorized access2'});
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+        if (error) {
+            return res.status(401).send({message: 'unauthorized access3'});
+        }
+
+        console.log('after decoded', decoded);
+
+        req.token_email = decoded.email;
+        next();
+    })
+}
+
+// middleware: to validate Firebase Access Token
 const verifyFirebaseToken = async (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send({ message: 'unauthorized access1' });
@@ -69,6 +94,14 @@ async function run() {
         const bidsCollection = db.collection('bids');
         const usersCollection = db.collection('users');
 
+        // jwt related api
+        app.post('/getToken', (req, res) => {
+            const loggedUser = req.body;
+            const token = jwt.sign(loggedUser, process.env.JWT_SECRET, {expiresIn: '1h'});
+            res.send({token: token});
+        })
+
+        // user related API
         // POST API: to create user
         app.post('/users', async (req, res) => {
             const newUser = req.body;
@@ -154,43 +187,51 @@ async function run() {
             res.send(result);
         });
 
-        // bids related APIs
-        // GET API to get the bids
-        app.get('/bids', verifyFirebaseToken, async (req, res) => {
-            console.log('headers', req);
+
+        // bids related api with JWT Token verify
+        app.get('/bids', verifyJWTToken, async(req, res) => {
+            // console.log('headers555555555555555', req.headers);
 
             const email = req.query.email;
             const query = {};
             if (email) {
-                if (email !== req.token_email) {
-                    return res.status(403).send({ message: 'forbidden access' });
-                }
                 query.buyer_email = email;
+            }
+
+            if (email !== req.token_email) {
+                return res.status(403).send({ message: 'forbidden access' });
             }
 
             const cursor = bidsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
-        });
+        })
+
+        // // bids related API with firebase token verify
+        // // GET API to get the bids using buyer email
+        // app.get('/bids', verifyFirebaseToken, async (req, res) => {
+        //     console.log('headers', req);
+
+        //     const email = req.query.email;
+        //     const query = {};
+        //     if (email) {
+        //         if (email !== req.token_email) {
+        //             return res.status(403).send({ message: 'forbidden access' });
+        //         }
+        //         query.buyer_email = email;
+        //     }
+
+        //     const cursor = bidsCollection.find(query);
+        //     const result = await cursor.toArray();
+        //     res.send(result);
+        // });
 
         // Get Bids by product id with descending bids price
-        app.get('/products/bids/:productId', async (req, res) => {
+        app.get('/products/bids/:productId', verifyFirebaseToken, async (req, res) => {
             const productId = req.params.productId;
             const query = { product: productId };
             const cursor = bidsCollection.find(query).sort({ bid_price: -1 });
             const result = await cursor.toArray();
-            res.send(result);
-        });
-
-        // GET API: to get my bids using buyer email address
-        app.get('/bids', async (req, res) => {
-            const query = {};
-            if (query.email) {
-                query.buyer_email = email;
-            }
-
-            const cursor = bidsCollection.find(query);
-            const result = cursor.toArray();
             res.send(result);
         });
 

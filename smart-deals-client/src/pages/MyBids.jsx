@@ -11,11 +11,12 @@ const MyBids = () => {
 
     // console.log('access token', user.accessToken);
 
+    // server side validation using JWT Token
     useEffect(() => {
         if (user?.email) {
             fetch(`http://localhost:3000/bids/?email=${user?.email}`, {
                 headers: {
-                    authorization: `Bearer ${user.accessToken}`
+                    authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
                 .then(res => res.json())
@@ -25,6 +26,22 @@ const MyBids = () => {
                 })
         }
     }, [user?.email, user.accessToken]);
+
+    // server side validation using firebase access token
+    // useEffect(() => {
+    //     if (user?.email) {
+    //         fetch(`http://localhost:3000/bids/?email=${user?.email}`, {
+    //             headers: {
+    //                 authorization: `Bearer ${user.accessToken}`
+    //             }
+    //         })
+    //             .then(res => res.json())
+    //             .then(data => {
+    //                 console.log('responds from server', data);
+    //                 setBids(data);
+    //             })
+    //     }
+    // }, [user?.email, user.accessToken]);
 
     const handleDeleteBid = (_id) => {
         Swal.fire({
@@ -97,7 +114,12 @@ const MyBids = () => {
                                 </td>
                                 <td>{bid.buyer_email}</td>
                                 <td>{bid.bid_price}</td>
-                                <th><div className={`badge badge-${bid.status === 'pending' ? 'warning' : 'success'}`}>{bid.status}</div></th>
+                                <th>
+                                    <div
+                                        className={`badge badge-${bid.status === 'pending' ? 'warning' : 'success'}`}
+                                    >
+                                        {bid.status}</div>
+                                </th>
                                 <td><button
                                     onClick={() => handleDeleteBid(bid._id)}
                                     className='btn btn-outline btn-xs'
