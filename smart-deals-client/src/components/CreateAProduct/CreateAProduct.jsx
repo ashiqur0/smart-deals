@@ -2,9 +2,11 @@ import React from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
+import useAxios from '../../hooks/useAxios';
 
 const CreateAProduct = () => {
     const { user } = useAuth();
+    const axiosInstance = useAxios();
 
     const handleCreateAProduct = (e) => {
         e.preventDefault();
@@ -13,13 +15,14 @@ const CreateAProduct = () => {
         const image = e.target.image.value;
         const price_min = e.target.min_price.value;
         const price_max = e.target.max_price.value;
-        const newProduct = { title, image, price_min, price_max, 
+        const newProduct = {
+            title, image, price_min, price_max,
             email: user.email,
             seller_name: user.displayName,
-         };
+        };
 
-        // console.log(newProduct);
-        axios.post(`http://localhost:3000/products`, newProduct)
+        // data posting using Axios Instance React Custom Hook
+        axiosInstance.post('/products', newProduct)
             .then(data => {
                 console.log(data.data);
 
@@ -33,6 +36,22 @@ const CreateAProduct = () => {
                     });
                 }
             })
+
+        // // console.log(newProduct);
+        // axios.post(`http://localhost:3000/products`, newProduct)
+        //     .then(data => {
+        //         console.log(data.data);
+
+        //         if (data.data.insertedId) {
+        //             Swal.fire({
+        //                 position: "center",
+        //                 icon: "success",
+        //                 title: "Your bid has been placed",
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             });
+        //         }
+        //     })
     }
 
     return (
