@@ -196,10 +196,10 @@ async function run() {
             const query = {};
             if (email) {
                 query.buyer_email = email;
-            }
 
-            if (email !== req.token_email) {
-                return res.status(403).send({ message: 'forbidden access' });
+                if (email !== req.token_email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
             }
 
             const cursor = bidsCollection.find(query);
