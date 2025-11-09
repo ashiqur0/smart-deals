@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Swal from 'sweetalert2'
 import { useEffect } from 'react';
 import { useState } from 'react';
+import axios from 'axios';
 
 const ProductDetails = () => {
     const product = useLoaderData();
@@ -16,17 +17,30 @@ const ProductDetails = () => {
 
     // side effect: go out side of the react world
     useEffect(() => {
-        fetch(`http://localhost:3000/products/bids/${productId}`, {
+        axios.get(`http://localhost:3000/products/bids/${productId}`, {
             headers: {
                 authorization: `Bearer ${user.accessToken}`
             }
         })
-            .then(res => res.json())
             .then(data => {
-                console.log('bids for this product', data);
-                setBids(data);
+                console.log('after axios get', data);
+                setBids(data.data);
             })
     }, [productId, user])
+
+    // // side effect: go out side of the react world
+    // useEffect(() => {
+    //     fetch(`http://localhost:3000/products/bids/${productId}`, {
+    //         headers: {
+    //             authorization: `Bearer ${user.accessToken}`
+    //         }
+    //     })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log('bids for this product', data);
+    //             setBids(data);
+    //         })
+    // }, [productId, user])
 
     const handleBidModalOpen = () => {
         bidModalRef.current.showModal();
