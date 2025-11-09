@@ -7,7 +7,7 @@ const Product = ({ product }) => {
     const { _id, title, price_min, price_max, image } = product;
 
     return (
-        <div className="card bg-base-100 w-full shadow-md p-4">
+        <div className="card bg-base-100 w-full shadow-md p-4 flex flex-col justify-between">
             <figure className="">
                 <img
                     src={image}
@@ -15,7 +15,7 @@ const Product = ({ product }) => {
                     className="rounded-xl w-full h-55 overflow-hidden" />
             </figure>
 
-            <div className="card-body">
+            <div className="space-y-3 mt-5">
                 <h2 className="card-title">{title}</h2>
                 <p>${price_min}-{price_max}</p>
                 <div className="card-actions ">

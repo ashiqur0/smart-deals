@@ -1,12 +1,13 @@
 import React from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import useAuth from '../../hooks/useAuth';
-import useAxios from '../../hooks/useAxios';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+// import useAxios from '../../hooks/useAxios';
 
 const CreateAProduct = () => {
     const { user } = useAuth();
-    const axiosInstance = useAxios();
+    // const axiosInstance = useAxios();
+    const axiosSecure = useAxiosSecure();
 
     const handleCreateAProduct = (e) => {
         e.preventDefault();
@@ -21,21 +22,17 @@ const CreateAProduct = () => {
             seller_name: user.displayName,
         };
 
-        // data posting using Axios Instance React Custom Hook
-        axiosInstance.post('/products', newProduct)
-            .then(data => {
-                console.log(data.data);
+        // axiosSecure Hook
+        axiosSecure.post('/products', newProduct)
+        .then(data => {
+            console.log('after creating new product', data.data);
+        })
 
-                if (data.data.insertedId) {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Your bid has been placed",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            })
+        // // data posting using Axios Instance React Custom Hook
+        // axiosInstance.post('/products', newProduct)
+        //     .then(data => {
+        //         console.log(data.data);
+        //     })
 
         // // console.log(newProduct);
         // axios.post(`http://localhost:3000/products`, newProduct)

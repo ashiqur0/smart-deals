@@ -4,28 +4,39 @@ import { useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 const MyBids = () => {
     const { user } = use(AuthContext);
     const [bids, setBids] = useState([]);
+    const axiosSecure = useAxiosSecure();
 
     // console.log('access token', user.accessToken);
 
-    // server side validation using JWT Token
+    // axios secure sends firebase token to server. so server side validation middleware should be 'verifyFirebaseToken'
     useEffect(() => {
-        if (user?.email) {
-            fetch(`http://localhost:3000/bids/?email=${user?.email}`, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`
-                }
+        axiosSecure.get(`/bids/?email=${user.email}`)
+            .then(data => {
+                setBids(data.data);
+                console.log('after getting bids', data.data);
             })
-                .then(res => res.json())
-                .then(data => {
-                    console.log('responds from server', data);
-                    setBids(data);
-                })
-        }
-    }, [user?.email, user.accessToken]);
+    }, [user, axiosSecure]);
+
+    // server side validation using JWT Token
+    // useEffect(() => {
+    //     if (user?.email) {
+    //         fetch(`http://localhost:3000/bids/?email=${user?.email}`, {
+    //             headers: {
+    //                 authorization: `Bearer ${localStorage.getItem('token')}`
+    //             }
+    //         })
+    //             .then(res => res.json())
+    //             .then(data => {
+    //                 console.log('responds from server', data);
+    //                 setBids(data);
+    //             })
+    //     }
+    // }, [user?.email]);
 
     // server side validation using firebase access token
     // useEffect(() => {

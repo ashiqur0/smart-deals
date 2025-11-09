@@ -157,7 +157,7 @@ async function run() {
         });
 
         // POST API to create a product
-        app.post('/products', async (req, res) => {
+        app.post('/products', verifyFirebaseToken, async (req, res) => {
             const newProduct = req.body;
             const result = await productCollection.insertOne(newProduct);
             res.send(result);
@@ -189,7 +189,7 @@ async function run() {
 
 
         // bids related api with JWT Token verify
-        app.get('/bids', verifyJWTToken, async(req, res) => {
+        app.get('/bids', verifyFirebaseToken, async(req, res) => {
             // console.log('headers555555555555555', req.headers);
 
             const email = req.query.email;
